@@ -3,10 +3,12 @@ import { useLanguage } from './LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Radio, Antenna, Zap, Waves } from 'lucide-react';
-import { mockStationData } from '../mock';
+import { useEquipmentData } from '../hooks/useData';
+import { LoadingCard, ErrorMessage } from './Loading';
 
 const Equipment = () => {
   const { t } = useLanguage();
+  const { data: equipmentList, loading, error, refetch } = useEquipmentData();
 
   const getEquipmentIcon = (type) => {
     switch (type) {
@@ -34,6 +36,41 @@ const Equipment = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <section id="equipment" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('equipment.title')}</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Professional amateur radio equipment for reliable worldwide communications
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <LoadingCard title="Loading equipment..." />
+            <LoadingCard title="Loading equipment..." />
+            <LoadingCard title="Loading equipment..." />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="equipment" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('equipment.title')}</h2>
+          </div>
+          <div className="max-w-4xl mx-auto">
+            <ErrorMessage error={error} onRetry={refetch} />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="equipment" className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
       <div className="container mx-auto px-4">
@@ -45,45 +82,56 @@ const Equipment = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {mockStationData.equipment.map((item) => (
-            <Card 
-              key={item.id} 
-              className={`bg-gradient-to-br ${getEquipmentBgColor(item.type)} border-2 hover:shadow-xl transition-all duration-300 transform hover:scale-105`}
-            >
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-3">
-                  {getEquipmentIcon(item.type)}
-                  <span className="text-lg">{item.name}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-gray-700 font-medium">{item.specs}</p>
-                
-                <div className="space-y-2">
-                  {item.power && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">{t('equipment.power')}:</span>
-                      <Badge variant="secondary">{item.power}</Badge>
-                    </div>
-                  )}
+          {equipmentList && equipmentList.length > 0 ? (
+            equipmentList.map((item) => (
+              <Card 
+                key={item._id || item.id} 
+                className={`bg-gradient-to-br ${getEquipmentBgColor(item.type)} border-2 hover:shadow-xl transition-all duration-300 transform hover:scale-105`}
+              >
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-3">
+                    {getEquipmentIcon(item.type)}
+                    <span className="text-lg">{item.name}</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-gray-700 font-medium">{item.specs}</p>
                   
-                  {item.gain && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Gain:</span>
-                      <Badge variant="secondary">{item.gain}</Badge>
-                    </div>
-                  )}
-                  
-                  {item.bands && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">{t('equipment.bands')}:</span>
-                      <Badge variant="outline" className="text-xs">{item.bands}</Badge>
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <div className="space-y-2">
+                    {item.power && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">{t('equipment.power')}:</span>
+                        <Badge variant="secondary">{item.power}</Badge>
+                      </div>
+                    )}
+                    
+                    {item.gain && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">Gain:</span>
+                        <Badge variant="secondary">{item.gain}</Badge>
+                      </div>
+                    )}
+                    
+                    {item.bands && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">{t('equipment.bands')}:</span>
+                        <Badge variant="outline" className="text-xs">{item.bands}</Badge>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-full">
+              <Card className="bg-white/80 backdrop-blur-sm border-2">
+                <CardContent className="text-center py-12">
+                  <Radio className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600">No equipment data available</p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
 
         {/* Technical Specifications */}

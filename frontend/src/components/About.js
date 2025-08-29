@@ -3,10 +3,46 @@ import { useLanguage } from './LanguageContext';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { User, MapPin, Radio, Award } from 'lucide-react';
-import { mockStationData } from '../mock';
+import { useStationData } from '../hooks/useData';
+import { LoadingCard, ErrorMessage } from './Loading';
 
 const About = () => {
   const { t } = useLanguage();
+  const { data: stationData, loading, error, refetch } = useStationData();
+
+  if (loading) {
+    return (
+      <section id="about" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('about.title')}</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              {t('about.description')}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <LoadingCard title="Loading station information..." />
+            <LoadingCard title="Loading station status..." />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="about" className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">{t('about.title')}</h2>
+          </div>
+          <div className="max-w-4xl mx-auto">
+            <ErrorMessage error={error} onRetry={refetch} />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="about" className="py-20 bg-white">
@@ -33,7 +69,7 @@ const About = () => {
                   <User className="w-5 h-5 text-blue-600" />
                   <span className="text-gray-700">{t('about.operator')}:</span>
                 </div>
-                <span className="font-semibold text-gray-900">{mockStationData.operator}</span>
+                <span className="font-semibold text-gray-900">{stationData?.operator || 'N/A'}</span>
               </div>
               
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -41,7 +77,7 @@ const About = () => {
                   <MapPin className="w-5 h-5 text-blue-600" />
                   <span className="text-gray-700">{t('about.location')}:</span>
                 </div>
-                <span className="font-semibold text-gray-900">{mockStationData.location}</span>
+                <span className="font-semibold text-gray-900">{stationData?.location || 'N/A'}</span>
               </div>
               
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -49,7 +85,7 @@ const About = () => {
                   <Radio className="w-5 h-5 text-blue-600" />
                   <span className="text-gray-700">{t('about.grid')}:</span>
                 </div>
-                <Badge variant="secondary" className="font-semibold">{mockStationData.grid}</Badge>
+                <Badge variant="secondary" className="font-semibold">{stationData?.grid || 'N/A'}</Badge>
               </div>
               
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -57,7 +93,7 @@ const About = () => {
                   <Award className="w-5 h-5 text-blue-600" />
                   <span className="text-gray-700">{t('about.license')}:</span>
                 </div>
-                <Badge variant="default" className="bg-blue-600 text-white">{mockStationData.license}</Badge>
+                <Badge variant="default" className="bg-blue-600 text-white">{stationData?.license || 'N/A'}</Badge>
               </div>
             </CardContent>
           </Card>
@@ -66,32 +102,41 @@ const About = () => {
           <Card className="border-2 hover:shadow-xl transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <div className={`w-3 h-3 rounded-full ${mockStationData.status === 'online' ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+                <div className={`w-3 h-3 rounded-full ${stationData?.status === 'online' ? 'bg-green-500' : 'bg-gray-400'}`}></div>
                 <span>{t('hero.status')}</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-center py-8">
                 <div className={`w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center ${
-                  mockStationData.status === 'online' 
+                  stationData?.status === 'online' 
                     ? 'bg-green-100 border-4 border-green-500' 
                     : 'bg-gray-100 border-4 border-gray-400'
                 }`}>
                   <Radio className={`w-8 h-8 ${
-                    mockStationData.status === 'online' ? 'text-green-600' : 'text-gray-500'
+                    stationData?.status === 'online' ? 'text-green-600' : 'text-gray-500'
                   }`} />
                 </div>
                 <h3 className={`text-2xl font-bold mb-2 ${
-                  mockStationData.status === 'online' ? 'text-green-600' : 'text-gray-500'
+                  stationData?.status === 'online' ? 'text-green-600' : 'text-gray-500'
                 }`}>
-                  {t(`hero.${mockStationData.status}`)}
+                  {t(`hero.${stationData?.status || 'offline'}`)}
                 </h3>
                 <p className="text-gray-600">
-                  {mockStationData.status === 'online' 
+                  {stationData?.status === 'online' 
                     ? 'Station is currently active and monitoring frequencies'
                     : 'Station is currently offline'
                   }
                 </p>
+                
+                {/* Last Updated */}
+                {stationData?.updated_at && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-sm text-gray-500">
+                      Last updated: {new Date(stationData.updated_at).toLocaleString()}
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

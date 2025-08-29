@@ -8,6 +8,8 @@ import { Label } from './ui/label';
 import { Badge } from './ui/badge';
 import { Mail, Send, MessageSquare, Radio, MapPin, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import { contactAPI } from '../services/api';
+import { LoadingSpinner } from './Loading';
 
 const Contacts = () => {
   const { t } = useLanguage();
@@ -16,8 +18,13 @@ const Contacts = () => {
     email: '',
     callsign: '',
     message: '',
-    qslRequest: false
+    qsl_request: false,
+    frequency: '',
+    mode: '',
+    rst_sent: '',
+    rst_received: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -27,17 +34,41 @@ const Contacts = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Mock form submission
-    toast.success('Message sent successfully! We will reply within 24 hours.');
-    setFormData({
-      name: '',
-      email: '',
-      callsign: '',
-      message: '',
-      qslRequest: false
-    });
+    
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const response = await contactAPI.submitContactForm(formData);
+      
+      if (response.data.success) {
+        toast.success(response.data.message || 'Message sent successfully!');
+        setFormData({
+          name: '',
+          email: '',
+          callsign: '',
+          message: '',
+          qsl_request: false,
+          frequency: '',
+          mode: '',
+          rst_sent: '',
+          rst_received: ''
+        });
+      } else {
+        toast.error(response.data.error || 'Failed to send message');
+      }
+    } catch (error) {
+      console.error('Contact form error:', error);
+      toast.error(error.response?.data?.error || 'Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -63,7 +94,7 @@ const Contacts = () => {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">{t('contact.name')}</Label>
+                    <Label htmlFor="name">{t('contact.name')} *</Label>
                     <Input
                       id="name"
                       name="name"
@@ -72,6 +103,7 @@ const Contacts = () => {
                       onChange={handleInputChange}
                       required
                       className="bg-white/80"
+                      disabled={isSubmitting}
                     />
                   </div>
                   <div className="space-y-2">
@@ -84,12 +116,13 @@ const Contacts = () => {
                       onChange={handleInputChange}
                       placeholder="e.g., VK3ABC"
                       className="bg-white/80"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">{t('contact.email')}</Label>
+                  <Label htmlFor="email">{t('contact.email')} *</Label>
                   <Input
                     id="email"
                     name="email"
@@ -98,11 +131,85 @@ const Contacts = () => {
                     onChange={handleInputChange}
                     required
                     className="bg-white/80"
+                    disabled={isSubmitting}
                   />
                 </div>
 
+                {/* QSL Request Fields */}
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="qsl_request"
+                    name="qsl_request"
+                    checked={formData.qsl_request}
+                    onChange={handleInputChange}
+                    className="rounded border-gray-300"
+                    disabled={isSubmitting}
+                  />
+                  <Label htmlFor="qsl_request" className="text-sm">
+                    This is a QSL request
+                  </Label>
+                </div>
+
+                {formData.qsl_request && (
+                  <div className="grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg border">
+                    <div className="space-y-2">
+                      <Label htmlFor="frequency">Frequency</Label>
+                      <Input
+                        id="frequency"
+                        name="frequency"
+                        type="text"
+                        value={formData.frequency}
+                        onChange={handleInputChange}
+                        placeholder="14.200 MHz"
+                        className="bg-white/80"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="mode">Mode</Label>
+                      <Input
+                        id="mode"
+                        name="mode"
+                        type="text"
+                        value={formData.mode}
+                        onChange={handleInputChange}
+                        placeholder="SSB, CW, FT8"
+                        className="bg-white/80"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rst_sent">RST Sent</Label>
+                      <Input
+                        id="rst_sent"
+                        name="rst_sent"
+                        type="text"
+                        value={formData.rst_sent}
+                        onChange={handleInputChange}
+                        placeholder="59"
+                        className="bg-white/80"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rst_received">RST Received</Label>
+                      <Input
+                        id="rst_received"
+                        name="rst_received"
+                        type="text"
+                        value={formData.rst_received}
+                        onChange={handleInputChange}
+                        placeholder="59"
+                        className="bg-white/80"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2">
-                  <Label htmlFor="message">{t('contact.message')}</Label>
+                  <Label htmlFor="message">{t('contact.message')} *</Label>
                   <Textarea
                     id="message"
                     name="message"
@@ -112,29 +219,26 @@ const Contacts = () => {
                     rows={5}
                     className="bg-white/80"
                     placeholder="Your message or QSL request details..."
+                    disabled={isSubmitting}
                   />
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="qslRequest"
-                    name="qslRequest"
-                    checked={formData.qslRequest}
-                    onChange={handleInputChange}
-                    className="rounded border-gray-300"
-                  />
-                  <Label htmlFor="qslRequest" className="text-sm">
-                    This is a QSL request
-                  </Label>
                 </div>
 
                 <Button 
                   type="submit"
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3"
+                  disabled={isSubmitting}
                 >
-                  <Send className="w-4 h-4 mr-2" />
-                  {t('contact.submit')}
+                  {isSubmitting ? (
+                    <>
+                      <LoadingSpinner size="small" className="mr-2" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      {t('contact.submit')}
+                    </>
+                  )}
                 </Button>
               </form>
             </CardContent>

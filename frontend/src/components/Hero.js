@@ -3,10 +3,12 @@ import { useLanguage } from './LanguageContext';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Radio, Signal, MapPin, Globe } from 'lucide-react';
-import { mockStationData } from '../mock';
+import { useStationData } from '../hooks/useData';
+import { LoadingSection, ErrorMessage } from './Loading';
 
 const Hero = () => {
   const { t } = useLanguage();
+  const { data: stationData, loading, error, refetch } = useStationData();
 
   const scrollToContacts = () => {
     const element = document.querySelector('#contacts');
@@ -15,6 +17,26 @@ const Hero = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-20">
+        <div className="container mx-auto px-4 py-16">
+          <LoadingSection title="Loading station information..." height="400px" />
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-20">
+        <div className="container mx-auto px-4 py-16 max-w-4xl">
+          <ErrorMessage error={error} onRetry={refetch} />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 pt-20">
       <div className="container mx-auto px-4 py-16">
@@ -22,17 +44,17 @@ const Hero = () => {
           {/* Station Status Badge */}
           <div className="flex justify-center mb-6">
             <Badge 
-              variant={mockStationData.status === 'online' ? 'default' : 'secondary'} 
+              variant={stationData?.status === 'online' ? 'default' : 'secondary'} 
               className={`px-4 py-2 text-sm font-medium ${
-                mockStationData.status === 'online' 
+                stationData?.status === 'online' 
                   ? 'bg-green-100 text-green-800 border-green-200' 
                   : 'bg-gray-100 text-gray-800 border-gray-200'
               }`}
             >
               <div className={`w-2 h-2 rounded-full mr-2 ${
-                mockStationData.status === 'online' ? 'bg-green-500' : 'bg-gray-400'
+                stationData?.status === 'online' ? 'bg-green-500' : 'bg-gray-400'
               }`}></div>
-              {t('hero.status')}: {t(`hero.${mockStationData.status}`)}
+              {t('hero.status')}: {t(`hero.${stationData?.status || 'offline'}`)}
             </Badge>
           </div>
 
@@ -47,7 +69,7 @@ const Hero = () => {
               </div>
             </div>
             <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-4">
-              {t('hero.title')}
+              {stationData?.callsign || '4K6AG'}
             </h1>
             <p className="text-2xl md:text-3xl text-blue-600 font-semibold mb-6">
               {t('hero.subtitle')}
@@ -64,22 +86,22 @@ const Hero = () => {
             <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
               <Signal className="w-6 h-6 text-blue-600 mx-auto mb-2" />
               <div className="text-sm text-gray-600">{t('about.operator')}</div>
-              <div className="font-semibold text-gray-900">{mockStationData.operator}</div>
+              <div className="font-semibold text-gray-900">{stationData?.operator || 'N/A'}</div>
             </div>
             <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
               <MapPin className="w-6 h-6 text-blue-600 mx-auto mb-2" />
               <div className="text-sm text-gray-600">{t('about.location')}</div>
-              <div className="font-semibold text-gray-900">{mockStationData.location}</div>
+              <div className="font-semibold text-gray-900">{stationData?.location || 'N/A'}</div>
             </div>
             <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
               <Globe className="w-6 h-6 text-blue-600 mx-auto mb-2" />
               <div className="text-sm text-gray-600">{t('about.grid')}</div>
-              <div className="font-semibold text-gray-900">{mockStationData.grid}</div>
+              <div className="font-semibold text-gray-900">{stationData?.grid || 'N/A'}</div>
             </div>
             <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
               <Radio className="w-6 h-6 text-blue-600 mx-auto mb-2" />
               <div className="text-sm text-gray-600">{t('about.license')}</div>
-              <div className="font-semibold text-gray-900">{mockStationData.license}</div>
+              <div className="font-semibold text-gray-900">{stationData?.license || 'N/A'}</div>
             </div>
           </div>
 
