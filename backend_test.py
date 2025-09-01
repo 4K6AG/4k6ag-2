@@ -94,7 +94,7 @@ class APITester:
             response = requests.post(f"{BASE_URL}/equipment", json=new_equipment, headers=HEADERS)
             if response.status_code == 200:
                 created_equipment = response.json()
-                equipment_id = created_equipment.get("id")
+                equipment_id = created_equipment.get("id") or created_equipment.get("_id")
                 if equipment_id:
                     self.created_ids.append(("equipment", equipment_id))
                     self.log_test("POST /equipment", True, f"Created equipment with ID: {equipment_id}")
