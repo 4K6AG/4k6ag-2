@@ -153,11 +153,14 @@ backend:
     file: "server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "Contact form submission endpoint created with QSL request support"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTING PASSED: POST /contact works for both regular messages and QSL requests. Regular contact form accepts name, email, callsign, message. QSL requests additionally accept frequency, mode, RST sent/received. API returns success confirmation with message ID. Both submission types working correctly."
 
   - task: "News API"
     implemented: true
