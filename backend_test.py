@@ -158,7 +158,7 @@ class APITester:
             response = requests.post(f"{BASE_URL}/qsl-cards", json=new_qsl, headers=HEADERS)
             if response.status_code == 200:
                 created_qsl = response.json()
-                qsl_id = created_qsl.get("id")
+                qsl_id = created_qsl.get("id") or created_qsl.get("_id")
                 if qsl_id:
                     self.created_ids.append(("qsl", qsl_id))
                     self.log_test("POST /qsl-cards", True, f"Created QSL card with ID: {qsl_id}")
