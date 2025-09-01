@@ -263,7 +263,7 @@ class APITester:
             response = requests.post(f"{BASE_URL}/news", json=news_item, headers=HEADERS)
             if response.status_code == 200:
                 created_news = response.json()
-                news_id = created_news.get("id")
+                news_id = created_news.get("id") or created_news.get("_id")
                 if news_id:
                     self.created_ids.append(("news", news_id))
                     self.log_test("POST /news", True, f"Created news item with ID: {news_id}")
