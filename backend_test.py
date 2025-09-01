@@ -87,15 +87,9 @@ class APITester:
             new_equipment = {
                 "name": "Test Transceiver IC-7300",
                 "type": "transceiver",
-                "manufacturer": "Icom",
-                "model": "IC-7300",
-                "specifications": {
-                    "frequency_range": "1.8-54 MHz",
-                    "power_output": "100W",
-                    "modes": ["SSB", "CW", "AM", "FM", "RTTY", "PSK"]
-                },
-                "description": "Test equipment for API validation",
-                "image_url": "https://example.com/ic7300.jpg"
+                "specs": "Frequency: 1.8-54 MHz, Power: 100W, Modes: SSB/CW/AM/FM/RTTY/PSK",
+                "power": "100W",
+                "bands": "1.8-54 MHz"
             }
             response = requests.post(f"{BASE_URL}/equipment", json=new_equipment, headers=HEADERS)
             if response.status_code == 200:
