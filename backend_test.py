@@ -201,15 +201,11 @@ class APITester:
                 "email": "jane.smith@example.com",
                 "callsign": "VK2XYZ",
                 "message": "QSL request for contact on 20m SSB",
-                "is_qsl_request": True,
-                "qsl_details": {
-                    "date": "2024-01-15",
-                    "time": "14:30",
-                    "frequency": "14.205",
-                    "mode": "SSB",
-                    "rst_sent": "59",
-                    "rst_received": "59"
-                }
+                "qsl_request": True,
+                "frequency": "14.205",
+                "mode": "SSB",
+                "rst_sent": "59",
+                "rst_received": "59"
             }
             response = requests.post(f"{BASE_URL}/contact", json=qsl_request_data, headers=HEADERS)
             if response.status_code == 200:
