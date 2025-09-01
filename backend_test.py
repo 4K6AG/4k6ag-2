@@ -337,7 +337,7 @@ class APITester:
             response = requests.post(f"{BASE_URL}/achievements", json=achievement, headers=HEADERS)
             if response.status_code == 200:
                 created_achievement = response.json()
-                achievement_id = created_achievement.get("id")
+                achievement_id = created_achievement.get("id") or created_achievement.get("_id")
                 if achievement_id:
                     self.created_ids.append(("achievement", achievement_id))
                     self.log_test("POST /achievements", True, f"Created achievement with ID: {achievement_id}")
