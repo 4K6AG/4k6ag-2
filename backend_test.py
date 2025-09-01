@@ -298,7 +298,7 @@ class APITester:
             gallery_item = {
                 "title": "Test Gallery Image",
                 "description": "Test image uploaded during API testing",
-                "image_url": "https://example.com/test_image.jpg",
+                "image": "https://example.com/test_image.jpg",
                 "category": "equipment"
             }
             response = requests.post(f"{BASE_URL}/gallery", json=gallery_item, headers=HEADERS)
