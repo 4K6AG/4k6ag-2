@@ -151,12 +151,9 @@ class APITester:
         # Test POST new QSL card
         try:
             new_qsl = {
-                "year": 2024,
+                "year": "2024",
                 "design": "Test QSL Card Design",
-                "description": "Test QSL card for API validation",
-                "image_url": "https://example.com/qsl2024.jpg",
-                "front_image": "https://example.com/qsl2024_front.jpg",
-                "back_image": "https://example.com/qsl2024_back.jpg"
+                "image": "https://example.com/qsl2024.jpg"
             }
             response = requests.post(f"{BASE_URL}/qsl-cards", json=new_qsl, headers=HEADERS)
             if response.status_code == 200:
