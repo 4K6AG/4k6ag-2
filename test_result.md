@@ -164,15 +164,18 @@ backend:
 
   - task: "News API"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "News endpoints with pagination implemented, needs testing"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTING PASSED: GET /news with pagination working correctly - supports limit/offset parameters, returns news array and total count. POST /news creates new articles with title, content, author, date, and category. Pagination respects limits and returns proper structure. Date handling works correctly."
 
   - task: "Gallery API"
     implemented: true
