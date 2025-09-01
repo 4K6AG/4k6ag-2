@@ -327,8 +327,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Equipment Management API"
-    - "Contact Form API"
     - "Equipment Section Integration"
     - "Contact Form Integration"
   stuck_tasks: []
