@@ -180,7 +180,7 @@ class APITester:
                 "email": "john.doe@example.com",
                 "callsign": "W1ABC",
                 "message": "Hello from the API test! This is a regular contact message.",
-                "is_qsl_request": False
+                "qsl_request": False
             }
             response = requests.post(f"{BASE_URL}/contact", json=contact_data, headers=HEADERS)
             if response.status_code == 200:
