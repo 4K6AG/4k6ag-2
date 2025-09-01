@@ -447,7 +447,7 @@ class APITester:
         
         # Test 404 for non-existent equipment
         try:
-            response = requests.get(f"{BASE_URL}/equipment/nonexistent-id")
+            response = requests.put(f"{BASE_URL}/equipment/nonexistent-id", json={"name": "test"}, headers=HEADERS)
             if response.status_code == 404:
                 self.log_test("404 Error Handling", True, "Correctly returns 404 for non-existent equipment")
             else:
