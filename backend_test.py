@@ -110,7 +110,7 @@ class APITester:
             try:
                 equipment_id = self.created_ids[-1][1]
                 update_data = {
-                    "description": "Updated test equipment description"
+                    "specs": "Updated specifications for test equipment"
                 }
                 response = requests.put(f"{BASE_URL}/equipment/{equipment_id}", json=update_data, headers=HEADERS)
                 if response.status_code == 200:
