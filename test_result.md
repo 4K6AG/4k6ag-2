@@ -134,15 +134,18 @@ backend:
 
   - task: "QSL Cards API"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Basic GET/POST endpoints created, needs comprehensive testing"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTING PASSED: GET /qsl-cards retrieves QSL cards sorted by year (descending), POST /qsl-cards successfully creates new QSL cards with proper validation. API accepts year as string, design description, and image URL. Returns proper UUIDs for created items."
 
   - task: "Contact Form API"
     implemented: true
