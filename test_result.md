@@ -179,15 +179,18 @@ backend:
 
   - task: "Gallery API"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Gallery endpoints created, needs testing"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTING PASSED: GET /gallery retrieves gallery items sorted by creation date (descending), POST /gallery creates new gallery items with title, description, image URL, and optional category. API properly handles image URLs and returns UUIDs for created items."
 
   - task: "Achievements API"
     implemented: true
