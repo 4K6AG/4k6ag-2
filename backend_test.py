@@ -300,7 +300,7 @@ class APITester:
             response = requests.post(f"{BASE_URL}/gallery", json=gallery_item, headers=HEADERS)
             if response.status_code == 200:
                 created_item = response.json()
-                gallery_id = created_item.get("id")
+                gallery_id = created_item.get("id") or created_item.get("_id")
                 if gallery_id:
                     self.created_ids.append(("gallery", gallery_id))
                     self.log_test("POST /gallery", True, f"Created gallery item with ID: {gallery_id}")
