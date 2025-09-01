@@ -194,15 +194,18 @@ backend:
 
   - task: "Achievements API"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "medium"  
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Achievement endpoints implemented, needs testing"
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTING PASSED: GET /achievements retrieves achievements sorted by year (descending), POST /achievements creates new achievements with title, description, year (as string), and optional category. API properly validates data and returns UUIDs for created achievements."
 
   - task: "Guestbook API"
     implemented: true
