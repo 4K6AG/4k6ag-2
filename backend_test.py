@@ -335,9 +335,8 @@ class APITester:
             achievement = {
                 "title": "Test Achievement Award",
                 "description": "Test achievement created during API testing",
-                "year": 2024,
-                "category": "contest",
-                "certificate_url": "https://example.com/test_certificate.pdf"
+                "year": "2024",
+                "category": "contest"
             }
             response = requests.post(f"{BASE_URL}/achievements", json=achievement, headers=HEADERS)
             if response.status_code == 200:
