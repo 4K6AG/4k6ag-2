@@ -393,7 +393,7 @@ class APITester:
             response = requests.post(f"{BASE_URL}/guestbook", json=guestbook_entry, headers=HEADERS)
             if response.status_code == 200:
                 created_entry = response.json()
-                entry_id = created_entry.get("id")
+                entry_id = created_entry.get("id") or created_entry.get("_id")
                 if entry_id:
                     self.created_ids.append(("guestbook", entry_id))
                     self.log_test("POST /guestbook", True, f"Created guestbook entry with ID: {entry_id}")
