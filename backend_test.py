@@ -11,7 +11,7 @@ from datetime import datetime
 from typing import Dict, Any
 
 # Configuration
-BASE_URL = "https://wizardly-hodgkin.preview.emergentagent.com/api"
+BASE_URL = "https://hamradio-app.preview.emergentagent.com/api"
 HEADERS = {"Content-Type": "application/json"}
 
 class APITester:
